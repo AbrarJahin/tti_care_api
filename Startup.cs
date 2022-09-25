@@ -49,11 +49,13 @@ namespace StartupProject_Asp.NetCore_PostGRE
             services.AddDbContext<ApplicationDbContext>(options => {
                 if (Environment.IsDevelopment())
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("DevelopConnection"));
+                    options.UseSqlite(Configuration.GetConnectionString("DevelopConnection"));
+                    //options.UseNpgsql(Configuration.GetConnectionString("DevelopConnection"));
                 }
                 else
                 {
-                    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
+                    options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+                    //options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
                 }
             });
             #endregion
