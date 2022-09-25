@@ -70,9 +70,9 @@ namespace StartupProject_Asp.NetCore_PostGRE.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "You must provide your phone number")]
             [Display(Name = "Phone Number")]
             [DataType(DataType.PhoneNumber)]
-            [StringLength(15, MinimumLength = 11)]
+            [StringLength(14, MinimumLength = 10)]
             //[RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
-            [RegularExpression(@"^[0][1][3-9][0-9]{8}$", ErrorMessage = "Not a valid Banagladeshi mobile phone number without country code")]
+            [RegularExpression(@"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$", ErrorMessage = "Not a valid USA mobile phone number")]
             public string PhoneNumber { get; set; }
 
             [Required(ErrorMessage = "A paassword must be provided")]
