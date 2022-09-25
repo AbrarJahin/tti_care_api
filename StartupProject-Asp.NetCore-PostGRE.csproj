@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="sqlite_database\**" />
+    <Content Remove="sqlite_database\**" />
+    <EmbeddedResource Remove="sqlite_database\**" />
+    <None Remove="sqlite_database\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\Migrations\20201207122800_InitialMigration.cs" />
     <Compile Remove="Data\Migrations\20201207122800_InitialMigration.Designer.cs" />
     <Compile Remove="Data\Migrations\20201208055705_InitialMigration.cs" />

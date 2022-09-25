@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StartupProject_Asp.NetCore_PostGRE.AuthorizationRequirement;
 using StartupProject_Asp.NetCore_PostGRE.Data;
+using StartupProject_Asp.NetCore_PostGRE.Data.Enums;
 using StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData;
 
 namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 {
-    [Route("api/[controller]")]
+	[Route("api/[controller]")]
     [ApiController]
     public class UsersApiController : ControllerBase
     {
@@ -21,14 +22,8 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
             _context = context;
         }
 
-        // GET: api/UsersApi
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<LeaveApplication>>> GetLeaveApplications()
-        {
-            return await _context.LeaveApplications.ToListAsync();
-        }
-
         // GET: api/UsersApi/5
+        [AuthorizePolicy(EClaim.UsersApi_Get)]
         [HttpGet("{id}")]
         public async Task<ActionResult<LeaveApplication>> GetLeaveApplication(Guid? id)
         {
@@ -42,9 +37,18 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
             return leaveApplication;
         }
 
+        // GET: api/UsersApi
+        [AuthorizePolicy(EClaim.UsersApi_GetAll)]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<LeaveApplication>>> GetLeaveApplications(int startIndex = 0, int itemsPerPage = 2)
+        {
+            return await _context.LeaveApplications.ToListAsync();
+        }
+
         // PUT: api/UsersApi/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [AuthorizePolicy(EClaim.UsersApi_Update)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLeaveApplication(Guid? id, LeaveApplication leaveApplication)
         {
@@ -77,6 +81,7 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
         // POST: api/UsersApi
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [AuthorizePolicy(EClaim.UsersApi_Create)]
         [HttpPost]
         public async Task<ActionResult<LeaveApplication>> PostLeaveApplication(LeaveApplication leaveApplication)
         {
@@ -87,6 +92,7 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
         }
 
         // DELETE: api/UsersApi/5
+        [AuthorizePolicy(EClaim.UsersApi_Delete)]
         [HttpDelete("{id}")]
         public async Task<ActionResult<LeaveApplication>> DeleteLeaveApplication(Guid? id)
         {
