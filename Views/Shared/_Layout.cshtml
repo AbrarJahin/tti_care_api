@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @await Html.PartialAsync("~/Views/Shared/LayoutPartial/_header.cshtml")
+</head>
+<body>
+    @await Html.PartialAsync("~/Views/Shared/LayoutPartial/_navigator.cshtml")
+    <div class="container">
+        @RenderBody()
+        @*
+            <main role="main" class="pb-3">
+            </main>
+        *@
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/LayoutPartial/_footer.cshtml")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

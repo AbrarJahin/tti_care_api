@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            @if (UserManager.GetUserAsync(User).Result.ProfilePicture != null)
+            {
+                <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="data:image/*;base64,@(Convert.ToBase64String(UserManager.GetUserAsync(User).Result.ProfilePicture))">
+            }
+            else
+            {
+                <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="~/img/DefaultProPic.png">
+            }
+            <span>@User.Identity.Name</span>
+        }
+        else
+        {
+            <span>User Account</span>
+        }
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
+            <div class="dropdown-divider"></div>
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="dropdown-item">Logout</button>
+            </form>
+        }
+        else
+        {
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        }
+    </div>
+ </li>

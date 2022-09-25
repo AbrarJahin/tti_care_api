@@ -1,0 +1,175 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h5 class="card card-header info-color white-text text-center py-4">
+    <strong>Create a new account</strong>
+</h5>
+
+<form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row justify-content-md-center form-group">
+        <div class="col col-md-6">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input asp-for="Input.FirstName" class="form-control" placeholder="@Html.DisplayNameFor(x => x.Input.FirstName)" />
+            </div>
+            <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+        </div>
+        <div class="col col-md-6">
+            @*<label asp-for="Input.FirstName" class="control-label"></label>*@
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input asp-for="Input.LastName" class="form-control" placeholder="@Html.DisplayNameFor(x => x.Input.LastName)" />
+            </div>
+            <span asp-validation-for="Input.LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row justify-content-md-center form-group">
+        <div class="col col-md-6">
+            <div class="form-group input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input asp-for="Input.Email" class="form-control" placeholder="@Html.DisplayNameFor(x => x.Input.Email)" />
+            </div>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+        <div class="col col-md-6">
+            <div class="form-group input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-volume-control-phone" aria-hidden="true"></i>
+                        +88
+                    </span>
+                </div>
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(x => x.Input.PhoneNumber)" />
+            </div>
+            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row justify-content-md-center form-group">
+        <div class="col-md-6">
+            @*
+                <div class="form-group">
+                    <label asp-for="Input.Password" class="control-label"></label>
+                    <input asp-for="Input.Password" class="form-control" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+            *@
+            <div class="form-group input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-key" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input asp-for="Input.Password" class="form-control" placeholder="@Html.DisplayNameFor(x => x.Input.Password)" />
+            </div>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-key" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="@Html.DisplayNameFor(x => x.Input.ConfirmPassword)" />
+            </div>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-md-12">
+            <div class="form-group">
+                <input asp-for="Input.TermsAndConditions" type="checkbox" class="form-control form-check-input must-check">
+                <label class="form-check-label" for="materialLoginFormRemember">@Html.DisplayNameFor(x => x.Input.TermsAndConditions)</label>
+            </div>
+            <span asp-validation-for="Input.TermsAndConditions" class="text-danger"></span>
+        </div>
+        @*
+        <div class="col-md-12">
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input asp-for="Input.TermsAndConditions" class="form-control form-check-input must-check" type="checkbox"> @Html.DisplayNameFor(x => x.Input.TermsAndConditions)
+                </label>
+                <span asp-validation-for="Input.TermsAndConditions" class="text-danger"></span>
+            </div>
+        </div>
+        *@
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-md-12 col-centered">
+            <div class="form-group">
+                <button type="submit" class="btn btn-outline-info btn-rounded btn-block my-4 waves-effect z-depth-0">Register</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row justify-content-md-center">
+    <div class="col-md-12 col-centered">
+        <p>
+            Already a member?
+            <a href="">Sign In</a>
+        </p>
+    </div>
+</div>
+@{
+    if ((Model.ExternalLogins?.Count ?? 0) != 0)
+    {
+        <div class="row">
+            <div class="col-md-6 col-md-offset-2">
+                <section>
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div>
+                            <p>
+                                @foreach (var provider in Model.ExternalLogins)
+                                {
+                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+
+                </section>
+            </div>
+        </div>
+
+    }
+    else
+    {
+        @*<div class="row">
+            <div class="col-md-6 col-md-offset-2">
+                <section>
+                    <h4>Use another service to register.</h4>
+                    <hr />
+
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                            for details on setting up this ASP.NET application to support logging in via external services.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </div>*@
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,51 @@
+﻿@using StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity
+@model IEnumerable<Role>
+@{
+    ViewData["Title"] = "Role Manager";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Role Manager</h1>
+<form method="post" asp-action="AddRole" asp-controller="RoleManager">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="">Create New Role</span>
+        </div>
+        <input name="roleName" type="text" class="form-control" placeholder="Name">
+        <input name="roleDescription" type="text" class="form-control" placeholder="Description">
+        <span class="input-group-btn">
+            <button class="btn btn-info">Add New Role</button>
+        </span>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <div class="btn-group" role="group" aria-label="Role Acrion">
+                    <a class="btn btn-warning" asp-controller="RoleClaim" asp-action="Manage" asp-route-id="@item.Id">Manage Claims</a>
+                    <a class="btn btn-danger" asp-controller="RoleManager" asp-action="DeleteRole" asp-route-id="@item.Id">Delete Role</a>
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

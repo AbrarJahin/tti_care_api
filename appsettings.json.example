@@ -1,0 +1,31 @@
+{
+  "ConnectionStrings": {
+    "DevelopConnection": "Server=localhost;Port=5432;Database=startup-project;User Id=postgres;Password=123;",
+    "DefaultConnection": "Server=localhost;Port=5432;Database=startup-project;User Id=postgres;Password=123;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "SmtpSettings": {
+    "New-API-Url": "https://ethereal.email/create",
+    "Server": "smtp.ethereal.email",
+    "Port": 587,
+    "SenderName": "Demo Application",
+    "SenderEmailAddress": "noreply@demo.app",
+    "UserName": "silas.little31@ethereal.email",
+    "Password": "Tr6NcrEWf56M4fHgHZ"
+  },
+  "SmtpSettings_": {
+    "Server": "smtp.gmail.com",
+    "Port": 587,
+    "SenderName": "Demo Application",
+    "SenderEmailAddress": "ajahin.bcc@gmail.com",
+    "UserName": "ajahin.bcc@gmail.com",
+    "Password": "<Password>"
+  },
+  "AllowedHosts": "*"
+}

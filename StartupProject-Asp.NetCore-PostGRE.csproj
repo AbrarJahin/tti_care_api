@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-StartupProject_Asp.NetCore_PostGRE-BF5E7D81-4C7B-4B78-9CC1-62E09F68190F</UserSecretsId>
+    <RootNamespace>StartupProject_Asp.NetCore_PostGRE</RootNamespace>
+    <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20201207122800_InitialMigration.cs" />
+    <Compile Remove="Data\Migrations\20201207122800_InitialMigration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201208055705_InitialMigration.cs" />
+    <Compile Remove="Data\Migrations\20201208055705_InitialMigration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201208090657_InitialMigration.cs" />
+    <Compile Remove="Data\Migrations\20201208090657_InitialMigration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201209083937_ApplicationTableAdded.cs" />
+    <Compile Remove="Data\Migrations\20201209083937_ApplicationTableAdded.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201209145950_ApplicationTableAddFix.cs" />
+    <Compile Remove="Data\Migrations\20201209145950_ApplicationTableAddFix.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201209150208_ApplicationTableAdded.cs" />
+    <Compile Remove="Data\Migrations\20201209150208_ApplicationTableAdded.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201209152302_LeaveApplicationAdded.cs" />
+    <Compile Remove="Data\Migrations\20201209152302_LeaveApplicationAdded.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\debug.log" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="appsettings.json.example" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".doc\Links_and_Commands.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="MailKit" Version="2.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.113" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    <PackageReference Include="WebMarkupMin.AspNetCore3" Version="2.8.15" />
+  </ItemGroup>
+
+</Project>
