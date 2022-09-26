@@ -57,6 +57,12 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			IdentityResult result = await _userManager.CreateAsync(newUser, registerVM.Password);
 			if(result.Succeeded)
 			{
+				//As role is already created, we can only add user
+				IdentityResult addRoleResult = await _userManager.AddToRoleAsync(newUser, registerVM.Role);
+				if (!addRoleResult.Succeeded)
+				{
+					return BadRequest(new { message = "User created but role does not assigned", success = false });
+				}
 				return Ok(new { message = "User created", success = true });
 			}
 			else

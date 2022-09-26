@@ -36,5 +36,9 @@ namespace StartupProject_Asp.NetCore_PostGRE.ViewModels.Api
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+		[Required]
+		[RegularExpression("Doctor|Patient", ErrorMessage = "User role can pnly be 'Doctor' or 'Patient'")]
+		public string Role { get; set; }
 	}
 }
