@@ -5,7 +5,7 @@ using StartupProject_Asp.NetCore_PostGRE.AuthorizationRequirement;
 using StartupProject_Asp.NetCore_PostGRE.Data;
 using StartupProject_Asp.NetCore_PostGRE.Data.Enums;
 using StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity;
-using StartupProject_Asp.NetCore_PostGRE.Models;
+using StartupProject_Asp.NetCore_PostGRE.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

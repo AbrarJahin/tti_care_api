@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace StartupProject_Asp.NetCore_PostGRE.Models
+namespace StartupProject_Asp.NetCore_PostGRE.ViewModels
 {
     public class UserRolesViewModel
     {

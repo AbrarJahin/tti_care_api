@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+//Global Error Handler is not configured yet - https://code-maze.com/global-error-handling-aspnetcore/
+
 namespace StartupProject_Asp.NetCore_PostGRE
 {
     public class Startup
