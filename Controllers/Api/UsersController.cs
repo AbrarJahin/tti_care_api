@@ -26,13 +26,20 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 		private readonly RoleManager<Role> _roleManager;
 		private readonly ApplicationDbContext _context;
 		private readonly IConfiguration _configuration;
+		private readonly TokenValidationParameters _tokenValidationParameters;
 
-		public UsersController(UserManager<User> userManager, RoleManager<Role> roleManager, ApplicationDbContext context, IConfiguration configuration)
+		public UsersController(
+			UserManager<User> userManager,
+			RoleManager<Role> roleManager,
+			ApplicationDbContext context,
+			IConfiguration configuration,
+			TokenValidationParameters tokenValidationParameters)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
 			_context = context;
 			_configuration = configuration;
+			_tokenValidationParameters = tokenValidationParameters
 		}
 
 		//[HttpPost("register")]

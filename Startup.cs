@@ -103,6 +103,21 @@ namespace StartupProject_Asp.NetCore_PostGRE
             #endregion
 
             #region JWT Configuration in Auth with secreat value
+            TokenValidationParameters tokenValidationParameters = new TokenValidationParameters() {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secreat"])),
+
+                    ValidateIssuer = false,
+                    //ValidateIssuer = true,
+                    //ValidIssuer = Configuration["JWT:Issuer"],
+
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:Audience"],
+
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            services.AddSingleton(tokenValidationParameters);
             services.AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -111,17 +126,7 @@ namespace StartupProject_Asp.NetCore_PostGRE
                 .AddJwtBearer(option=> {    //Add JWT bearer verifier
                     option.SaveToken = true;
                     option.RequireHttpsMetadata = false;    //HTTPS is not required
-                    option.TokenValidationParameters = new TokenValidationParameters() {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secreat"])),
-
-                        ValidateIssuer = false,
-                        //ValidateIssuer = true,
-                        //ValidIssuer = Configuration["JWT:Issuer"],
-
-                        ValidateAudience = true,
-                        ValidAudience = Configuration["JWT:Audience"]
-                    };
+                    option.TokenValidationParameters = tokenValidationParameters;
                 });
             #endregion
             #region Policies Configuration in Auth
