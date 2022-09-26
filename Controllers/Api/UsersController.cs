@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using StartupProject_Asp.NetCore_PostGRE.Data;
+using StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData;
 using StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity;
 using StartupProject_Asp.NetCore_PostGRE.ViewModels.Api;
 using System;
@@ -141,11 +142,36 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 				);
 			//int minuites = Convert.ToInt32(_configuration["JWT:AccessTokenTimeoutInMinutes"]);//////
 			string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+			//Store a refresh token if possible as well
+			RefreshToken refreshToken = await GetOrCreateRefreshToken(token, user);
 			JwtViewModel response = new JwtViewModel() {
 				Token = jwtToken,
+				RefreshToken = refreshToken.Token,
 				ExpiresAt = token.ValidTo
 			};
 			return response;
+		}
+
+		private async Task<RefreshToken> GetOrCreateRefreshToken(JwtSecurityToken token, User user)
+		{
+			//Find Alive refresh token if available, if yes then return that
+			RefreshToken searchedRefreshToken = _context.RefreshTokens
+				.Where(rt => rt.User == user && rt.isRevoked == false && rt.DateExpire > DateTime.UtcNow)
+				.FirstOrDefault();
+			if(searchedRefreshToken!=null)
+			{
+				return searchedRefreshToken;
+			}
+			RefreshToken refreshToken = new RefreshToken()
+			{
+				JwtId = token.Id,
+				User = user,
+				DateExpire = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JWT:RefreshTokenTimeoutInDays"])),
+				Token = Guid.NewGuid().ToString() + $"-{DateTime.UtcNow:yyyyMddhmmssffftt}-" + Guid.NewGuid().ToString()
+			};
+			await _context.RefreshTokens.AddAsync(refreshToken);
+			await _context.SaveChangesAsync();
+			return refreshToken;
 		}
 	}
 }
