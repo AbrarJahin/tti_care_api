@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using StartupProject_Asp.NetCore_PostGRE.Data;
@@ -39,7 +39,7 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			_roleManager = roleManager;
 			_context = context;
 			_configuration = configuration;
-			_tokenValidationParameters = tokenValidationParameters
+			_tokenValidationParameters = tokenValidationParameters;
 		}
 
 		//[HttpPost("register")]
@@ -107,13 +107,78 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			}
 		}
 
+		[HttpPost]
+		[AllowAnonymous]
+		public async Task<IActionResult> RefreshTokenAsync([FromBody] TokenRequestViewModel tokenRequestVM)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(new { message = "Please provide all required fields", success = false });
+			}
+
+			JwtViewModel result = await VerifyAndGenereateTokenAsync(tokenRequestVM);
+			return Ok(result);
+		}
+
+		private async Task<JwtViewModel> VerifyAndGenereateTokenAsync(TokenRequestViewModel tokenRequestVM)
+		{
+			JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+			RefreshToken storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequestVM.RefreshToken);
+			User dbUser = await _userManager.FindByIdAsync(storedToken.UserId.ToString());
+			try
+			{
+				//Already valid, so don't update it
+				ClaimsPrincipal tokenCheckResult = jwtTokenHandler.ValidateToken(
+						tokenRequestVM.Token,
+						_tokenValidationParameters,
+						out SecurityToken securityToken
+					);
+				return await GenerateJWTTokenAsync(dbUser, storedToken);
+			}
+			catch (SecurityTokenNoExpirationException)
+			{
+				if(storedToken.DateExpire>=DateTime.UtcNow)	//Refresh Token still valid
+				{
+					return await GenerateJWTTokenAsync(dbUser, storedToken);
+				}
+				else
+				{
+					return await GenerateJWTTokenAsync(dbUser);
+				}
+			}
+			catch (Exception ex)
+			{
+				return new JwtViewModel()
+				{
+					Error = ex.Message
+				};
+			}
+		}
+
 		[HttpGet]
+		//[Authorize(Roles = "Doctor")]
 		[Authorize]
-		public async Task<IActionResult> GetAllUsersAsync(string userType)
+		public async Task<IActionResult> GetAllUsersAsync(string userType, int startIndex=0, int usersPerPage = 20)
 		{
 			if (string.IsNullOrEmpty(userType))
 			{
-				return Ok(new { message = "All users list", success = true });
+				var allUsers = await _context.Users
+									.OrderBy(u => u.UserName)
+									.Select(u => new
+									{
+										name = u.FirstName + " " + u.LastName,
+										email = u.Email,
+										phone = u.PhoneNumber,
+										roles = (from userRole in u.Roles
+															 join role in _context.Roles on userRole.RoleId
+																 equals role.Id
+															 select role.Name).ToList()
+									})
+									.Skip(startIndex)
+									.Take(usersPerPage)
+									.ToListAsync();
+				return Ok(allUsers);
+				//return Ok(new { message = "All users list", success = true });
 			}
 			else if(userType == "Doctor")
 			{
@@ -130,7 +195,7 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			throw new ArgumentException($"'{nameof(userType)}' cannot be null or empty.", nameof(userType));
 		}
 
-		private async Task<JwtViewModel> GenerateJWTTokenAsync(User user)
+		private async Task<JwtViewModel> GenerateJWTTokenAsync(User user, RefreshToken rToken = null)
 		{
 			var authClaims = new List<Claim>() {
 				new Claim(ClaimTypes.Name, user.UserName),
@@ -149,6 +214,18 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 				);
 			//int minuites = Convert.ToInt32(_configuration["JWT:AccessTokenTimeoutInMinutes"]);//////
 			string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+			if(rToken!=null)	//Token already there, so don't need to update the token
+			{
+				JwtViewModel rTokenResponse = new JwtViewModel()
+				{
+					Token = jwtToken,
+					RefreshToken = rToken.Token,
+					ExpiresAt = token.ValidTo
+				};
+				return rTokenResponse;
+			}
+
 			//Store a refresh token if possible as well
 			RefreshToken refreshToken = await GetOrCreateRefreshToken(token, user);
 			JwtViewModel response = new JwtViewModel() {

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace StartupProject_Asp.NetCore_PostGRE.ViewModels.Api
 {
-	public class JwtViewModel
+	public class TokenRequestViewModel
 	{
+		[Required]
 		public string Token { get; set; }
+		[Required]
 		public string RefreshToken { get; set; }
-		public DateTime ExpiresAt { get; set; }
-		public string Error { get; set; }
 	}
 }

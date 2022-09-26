@@ -29,6 +29,8 @@
     <Compile Remove="Data\Migrations\20201209150208_ApplicationTableAdded.Designer.cs" />
     <Compile Remove="Data\Migrations\20201209152302_LeaveApplicationAdded.cs" />
     <Compile Remove="Data\Migrations\20201209152302_LeaveApplicationAdded.Designer.cs" />
+    <Compile Remove="Data\Migrations\20220926203028_Update-Refresh-Token.cs" />
+    <Compile Remove="Data\Migrations\20220926203028_Update-Refresh-Token.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,6 @@
 ﻿using StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData
 {
@@ -13,6 +11,8 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData
 		public bool isRevoked { get; set; } = false;
 		public DateTime DateAdded { get; set; } = DateTime.UtcNow;
 		public DateTime DateExpire { get; set; }
-		public virtual User User {get; set; }
+		public Guid? UserId { get; set; }
+		[ForeignKey("UserId")]
+		public virtual User User { get; set; }
 	}
 }
