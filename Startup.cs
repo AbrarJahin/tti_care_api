@@ -115,6 +115,7 @@ namespace StartupProject_Asp.NetCore_PostGRE
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secreat"])),
 
+                        ValidateIssuer = false,
                         //ValidateIssuer = true,
                         //ValidIssuer = Configuration["JWT:Issuer"],
 
