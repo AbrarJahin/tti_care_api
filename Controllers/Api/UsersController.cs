@@ -51,7 +51,8 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 				LastName = registerVM.LastName,
 				Email = registerVM.Email,
 				PhoneNumber = registerVM.PhoneNumber,
-				UserName = registerVM.Email
+				UserName = registerVM.Email,
+				EmailConfirmed = true
 			};
 			IdentityResult result = await _userManager.CreateAsync(newUser, registerVM.Password);
 			if(result.Succeeded)
