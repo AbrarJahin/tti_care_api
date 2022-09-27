@@ -71,16 +71,16 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data
                 //builder.HasOne(userToken => userToken.User).WithMany(user => user.UserTokens).HasForeignKey(userToken => userToken.UserId);
                 builder.ToTable("UserToken", schema: IdentitySchemaName);
             });
-            #endregion
+			#endregion
 
-            #region Data Seeding
-            //if (Environment.IsDevelopment())
-            //{
-            //    using SeedController seeder = new SeedController(builder);
-            //    seeder.Execute();
-            //}
-            #endregion
-        }
+			#region Data Seeding
+			if (Environment.IsDevelopment())
+			{
+				using SeedController seeder = new SeedController(builder);
+				seeder.Execute();
+			}
+			#endregion
+		}
 
         #region Update edit time on every entry edit
         public override int SaveChanges()

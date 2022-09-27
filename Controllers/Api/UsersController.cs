@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -183,7 +184,12 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 		[Authorize(Roles = "Doctor")]
 		public async Task<IActionResult> GetCurrentDoctorPatientsAsync([FromForm] int startIndex = 0, [FromForm] int usersPerPage = 2)
 		{
-			User user = await _userManager.GetUserAsync(HttpContext.User);
+			User user = await _userManager.FindByEmailAsync(HttpContext.User.Identity.Name);
+			if(user == null)
+			{
+				string userEmail = User.FindFirstValue(ClaimTypes.Email);
+				user = await _userManager.FindByEmailAsync(userEmail);
+			}
 			var patients = await _context.DoctorAssignments
 							.Where(x => x.Doctor == user)
 							.Include(da => da.Patient)
