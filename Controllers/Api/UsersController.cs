@@ -181,6 +181,26 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 
 		[HttpPost]
 		[Authorize(Roles = "Doctor")]
+		public async Task<IActionResult> GetCurrentDoctorPatientsAsync([FromForm] int startIndex = 0, [FromForm] int usersPerPage = 2)
+		{
+			User user = await _userManager.GetUserAsync(HttpContext.User);
+			var patients = await _context.DoctorAssignments
+							.Where(x => x.Doctor == user)
+							.Include(da => da.Patient)
+							.OrderBy(da => da.Patient.FirstName)
+							.Select(da => new {
+								fullName = da.Patient.FullName,
+								email = da.Patient.Email,
+								phone = da.Patient.PhoneNumber
+							})
+							.Skip(startIndex)
+							.Take(usersPerPage)
+							.ToListAsync();
+			return Ok(patients);
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Doctor")]
 		public async Task<IActionResult> AssignToDoctorAsync([FromForm] string doctorEmail, [FromForm] string patientEmail)
 		{
 			User doctor = await _userManager.FindByEmailAsync(doctorEmail);
@@ -216,8 +236,27 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 		{
 			IList<string> doctorRoles = await _userManager.GetRolesAsync(doctor);
 			IList<string> patientRoles = await _userManager.GetRolesAsync(patient);
-			bool isAssignable = doctorRoles.Contains("Doctor") && doctorRoles.Contains("Patient");
-			return isAssignable;
+			if(!(doctorRoles.Contains("Doctor") && patientRoles.Contains("Patient")))	//Not Assignable
+			{
+				return false;
+			}
+			//Else assignable, so assign doctors to Patients
+			//checked if already assigned - if yes, then don't assign again
+			var assignmentFound = await _context.DoctorAssignments
+									.Where(x=> x.Doctor == doctor && x.Patient == patient)
+									.FirstOrDefaultAsync();
+			if(assignmentFound!=null)
+			{
+				//Connection is already there, so return true
+				return true;
+			}
+			//Create connection
+			await _context.DoctorAssignments.AddAsync(new DoctorAssignment() {
+						Doctor = doctor,
+						Patient = patient
+					});
+			await _context.SaveChangesAsync();
+			return true;
 		}
 
 		private async Task<string> GetRoleAsync(string roleName)
