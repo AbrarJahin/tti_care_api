@@ -85,23 +85,6 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			}
 		}
 
-		private async Task<string> GetRoleAsync(string roleName)
-		{
-			var roleExist = await _roleManager.RoleExistsAsync(roleName);
-			if (!roleExist)
-			{
-				//create the roles and seed them to the database: Question 1
-				IdentityResult roleResult = await _roleManager.CreateAsync(new Role() {
-											Name = roleName
-				});
-				if(roleResult.Succeeded==false)
-				{
-					throw new CannotUnloadAppDomainException("Role Can't be created");
-				}
-			}
-			return roleName;
-		}
-
 		[HttpPost]
 		[AllowAnonymous]
 		public async Task<IActionResult> LoginAsync([FromBody] LoginViewModel loginVM)
@@ -138,45 +121,10 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			return Ok(result);
 		}
 
-		private async Task<JwtViewModel> VerifyAndGenereateTokenAsync(TokenRequestViewModel tokenRequestVM)
-		{
-			JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
-			RefreshToken storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequestVM.RefreshToken);
-			User dbUser = await _userManager.FindByIdAsync(storedToken.UserId.ToString());
-			try
-			{
-				//Already valid, so don't update it
-				ClaimsPrincipal tokenCheckResult = jwtTokenHandler.ValidateToken(
-						tokenRequestVM.Token,
-						_tokenValidationParameters,
-						out SecurityToken securityToken
-					);
-				return await GenerateJWTTokenAsync(dbUser, storedToken);
-			}
-			catch (SecurityTokenNoExpirationException)
-			{
-				if(storedToken.DateExpire>=DateTime.UtcNow)	//Refresh Token still valid
-				{
-					return await GenerateJWTTokenAsync(dbUser, storedToken);
-				}
-				else
-				{
-					return await GenerateJWTTokenAsync(dbUser);
-				}
-			}
-			catch (Exception ex)
-			{
-				return new JwtViewModel()
-				{
-					Error = ex.Message
-				};
-			}
-		}
-
 		[HttpGet]
 		[Authorize(Roles = "Doctor")]
 		//[Authorize]
-		public async Task<IActionResult> GetAllUsersAsync(string userType, int startIndex=0, int usersPerPage = 20)
+		public async Task<IActionResult> GetAllUsersAsync(string userType, int startIndex = 0, int usersPerPage = 20)
 		{
 			if (string.IsNullOrEmpty(userType))
 			{
@@ -229,6 +177,100 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 				return BadRequest($"Can't return {userType} users");
 			}
 			throw new ArgumentException($"'{nameof(userType)}' cannot be null or empty.", nameof(userType));
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Doctor")]
+		public async Task<IActionResult> AssignToDoctorAsync([FromForm] string doctorEmail, [FromForm] string patientEmail)
+		{
+			User doctor = await _userManager.FindByEmailAsync(doctorEmail);
+			User patient = await _userManager.FindByEmailAsync(patientEmail);
+			bool isAssigned = await AssignPatientToDoctor(doctor, patient);
+			if(isAssigned)
+			{
+				return Ok(new
+				{
+					doctorName = doctor.FullName,
+					doctorEmail = doctor.Email,
+					patientName = patient.FullName,
+					patientEmail = patient.Email,
+					assignmentStatus = isAssigned,
+					message = "Assigned Successfully"
+				});
+			}
+			else
+			{
+				return BadRequest(new
+				{
+					doctorName = doctor.FullName,
+					doctorEmail = doctor.Email,
+					patientName = patient.FullName,
+					patientEmail = patient.Email,
+					assignmentStatus = isAssigned,
+					message = "Assignment Failed"
+				});
+			}
+		}
+
+		private async Task<bool> AssignPatientToDoctor(User doctor, User patient)
+		{
+			IList<string> doctorRoles = await _userManager.GetRolesAsync(doctor);
+			IList<string> patientRoles = await _userManager.GetRolesAsync(patient);
+			bool isAssignable = doctorRoles.Contains("Doctor") && doctorRoles.Contains("Patient");
+			return isAssignable;
+		}
+
+		private async Task<string> GetRoleAsync(string roleName)
+		{
+			var roleExist = await _roleManager.RoleExistsAsync(roleName);
+			if (!roleExist)
+			{
+				//create the roles and seed them to the database: Question 1
+				IdentityResult roleResult = await _roleManager.CreateAsync(new Role()
+				{
+					Name = roleName
+				});
+				if (roleResult.Succeeded == false)
+				{
+					throw new CannotUnloadAppDomainException("Role Can't be created");
+				}
+			}
+			return roleName;
+		}
+
+		private async Task<JwtViewModel> VerifyAndGenereateTokenAsync(TokenRequestViewModel tokenRequestVM)
+		{
+			JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+			RefreshToken storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequestVM.RefreshToken);
+			User dbUser = await _userManager.FindByIdAsync(storedToken.UserId.ToString());
+			try
+			{
+				//Already valid, so don't update it
+				ClaimsPrincipal tokenCheckResult = jwtTokenHandler.ValidateToken(
+						tokenRequestVM.Token,
+						_tokenValidationParameters,
+						out SecurityToken securityToken
+					);
+				return await GenerateJWTTokenAsync(dbUser, storedToken);
+			}
+			catch (SecurityTokenNoExpirationException)
+			{
+				if(storedToken.DateExpire>=DateTime.UtcNow)	//Refresh Token still valid
+				{
+					return await GenerateJWTTokenAsync(dbUser, storedToken);
+				}
+				else
+				{
+					return await GenerateJWTTokenAsync(dbUser);
+				}
+			}
+			catch (Exception ex)
+			{
+				return new JwtViewModel()
+				{
+					Error = ex.Message
+				};
+			}
 		}
 
 		private async Task<JwtViewModel> GenerateJWTTokenAsync(User user, RefreshToken rToken = null)
