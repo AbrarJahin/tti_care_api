@@ -19,6 +19,7 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data
         public DbSet<XmlFile> XmlFiles { get; set; }
         public DbSet<LeaveApplication> LeaveApplications { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<DoctorAssignment> DoctorAssignments { get; set; }
         #endregion
 
         private string IdentitySchemaName = "Identity";

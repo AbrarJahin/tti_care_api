@@ -1,9 +1,6 @@
 ﻿using StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData
 {
