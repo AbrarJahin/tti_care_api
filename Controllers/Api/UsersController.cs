@@ -71,7 +71,8 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			if (result.Succeeded)
 			{
 				//As role is already created, we can only add user
-				IdentityResult addRoleResult = await _userManager.AddToRoleAsync(newUser, registerVM.Role);
+				string roleName = await GetRoleAsync(registerVM.Role);
+				IdentityResult addRoleResult = await _userManager.AddToRoleAsync(newUser, roleName);
 				if (!addRoleResult.Succeeded)
 				{
 					return BadRequest(new { message = "User created but role does not assigned", success = false });
@@ -82,6 +83,23 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			{
 				return BadRequest(new { message = result.Errors, success = false });
 			}
+		}
+
+		private async Task<string> GetRoleAsync(string roleName)
+		{
+			var roleExist = await _roleManager.RoleExistsAsync(roleName);
+			if (!roleExist)
+			{
+				//create the roles and seed them to the database: Question 1
+				IdentityResult roleResult = await _roleManager.CreateAsync(new Role() {
+											Name = roleName
+				});
+				if(roleResult.Succeeded==false)
+				{
+					throw new CannotUnloadAppDomainException("Role Can't be created");
+				}
+			}
+			return roleName;
 		}
 
 		[HttpPost]
@@ -156,8 +174,8 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 		}
 
 		[HttpGet]
-		//[Authorize(Roles = "Doctor")]
-		[Authorize]
+		[Authorize(Roles = "Doctor")]
+		//[Authorize]
 		public async Task<IActionResult> GetAllUsersAsync(string userType, int startIndex=0, int usersPerPage = 20)
 		{
 			if (string.IsNullOrEmpty(userType))
@@ -168,25 +186,43 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 									{
 										name = u.FirstName + " " + u.LastName,
 										email = u.Email,
-										phone = u.PhoneNumber,
-										roles = (from userRole in u.Roles
-															 join role in _context.Roles on userRole.RoleId
-																 equals role.Id
-															 select role.Name).ToList()
+										phone = u.PhoneNumber
 									})
 									.Skip(startIndex)
 									.Take(usersPerPage)
 									.ToListAsync();
-				return Ok(allUsers);
-				//return Ok(new { message = "All users list", success = true });
+				return Ok(new { allUsers = allUsers });
 			}
-			else if(userType == "Doctor")
+			else if (userType == "Doctor")
 			{
-				return Ok("All Doctor's list");
+				//IList<User> userList = await _userManager.GetUsersInRoleAsync("Doctor");
+				IList<User> userList = await _userManager.GetUsersInRoleAsync("Doctor");
+				var doctors = userList.OrderBy(u => u.UserName)
+									.Select(u => new
+									{
+										name = u.FirstName + " " + u.LastName,
+										email = u.Email,
+										phone = u.PhoneNumber
+									})
+									.Skip(startIndex)
+									.Take(usersPerPage)
+									.ToList();
+				return Ok(new { doctors = doctors });
 			}
 			else if (userType == "Patient")
 			{
-				return Ok("All Patient list");
+				IList<User> userList = await _userManager.GetUsersInRoleAsync("Patient");
+				var patients = userList.OrderBy(u => u.UserName)
+									.Select(u => new
+									{
+										name = u.FirstName + " " + u.LastName,
+										email = u.Email,
+										phone = u.PhoneNumber
+									})
+									.Skip(startIndex)
+									.Take(usersPerPage)
+									.ToList();
+				return Ok(new { patients = patients });
 			}
 			else
 			{
@@ -204,6 +240,14 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 				new Claim(JwtRegisteredClaimNames.Sub, user.Email),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
 			};
+
+			//Add user role claims as well
+			IList<string> userRoles = await _userManager.GetRolesAsync(user);
+			foreach (string userRole in userRoles)
+			{
+				authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+			}
+
 			var authSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secreat"]));
 			var token = new JwtSecurityToken(
 					issuer: _configuration["JWT:Issuer"],
