@@ -7,8 +7,8 @@
     "Secreat": "Hi,-1-m?secreat!",
     "Audience": "user",
     "Issuer": "https://localhost:44381/",
-    "RefreshTokenTimeoutInDays": 7,
-    "AccessTokenTimeoutInMinutes": 10
+    "RefreshTokenTimeoutInDays": 10,
+    "AccessTokenTimeoutInMinutes": 100
   },
   "Logging": {
     "LogLevel": {

@@ -2,6 +2,8 @@
 
 I am using one of my previous open-source projects for this project which is robust for role management. The project I am using can be found [here](https://github.com/AbrarJahin/Asp.NetCore_3.1-PostGRE_Role-Claim_Management).
 
+This app is using ASP.Net core 3.1 and SQLite Database. If you run the project, please copy `appsettings.json.example` in the same directory and rename it to `appsettings.json`. If you do that, then you can run the project in visual studio with this file- `StartupProject-Asp.NetCore-PostGRE.sln`. If you do that, and restore or rebuild the project, it will automatically download and install all the required front-end and back-end libraries and you can run the project. Postman can be a best software to check the API.
+
 ## Already created users stored in the SqLite database
 
 Super-Admin-
