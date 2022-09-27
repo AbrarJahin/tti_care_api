@@ -2,54 +2,22 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StartupProject_Asp.NetCore_PostGRE.Data;
 
 namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220926175248_RefreshTokenTableAdded")]
+    partial class RefreshTokenTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("public")
                 .HasAnnotation("ProductVersion", "3.1.25");
-
-            modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData.DoctorAssignment", b =>
-                {
-                    b.Property<Guid?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("CreateTime")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnName("CreateTime")
-                        .HasColumnType("TIMESTAMPTZ");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("DoctorId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("LastUpdateTime")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnName("LastUpdateTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("PatientId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("DoctorAssignments");
-                });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData.LeaveApplication", b =>
                 {
@@ -262,6 +230,16 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("Role","Identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c"),
+                            ConcurrencyStamp = "1a68549d-4576-4f2e-baa1-7faa44f9312c",
+                            Description = "9/26/2022 5:52:48 PM",
+                            Name = "Super-Admin",
+                            NormalizedName = "SUPER-ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.RoleClaim", b =>
@@ -285,6 +263,85 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("RoleClaim","Identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            ClaimType = "SuperAdmin_All",
+                            ClaimValue = "SuperAdmin.All",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -2,
+                            ClaimType = "Role_Create",
+                            ClaimValue = "Role.Create",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -3,
+                            ClaimType = "Role_Read",
+                            ClaimValue = "Role.Read",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -4,
+                            ClaimType = "Role_Update",
+                            ClaimValue = "Role.Update",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -5,
+                            ClaimType = "Role_Delete",
+                            ClaimValue = "Role.Delete",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -6,
+                            ClaimType = "Claim_Create",
+                            ClaimValue = "Claim.Create",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -7,
+                            ClaimType = "UsersApi_Get",
+                            ClaimValue = "UsersApi.Get",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -8,
+                            ClaimType = "UsersApi_GetAll",
+                            ClaimValue = "UsersApi.GetAll",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -9,
+                            ClaimType = "UsersApi_Update",
+                            ClaimValue = "UsersApi.Update",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -10,
+                            ClaimType = "UsersApi_Create",
+                            ClaimValue = "UsersApi.Create",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        },
+                        new
+                        {
+                            Id = -11,
+                            ClaimType = "UsersApi_Delete",
+                            ClaimValue = "UsersApi.Delete",
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c")
+                        });
                 });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.User", b =>
@@ -362,6 +419,27 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("User","Identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "bc026aa7-f181-4103-b8c3-01b1239868ae",
+                            Email = "abrar@jahin.com",
+                            EmailConfirmed = true,
+                            FirstName = "Abrar",
+                            LastName = "Jahin",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ABRAR@JAHIN.COM",
+                            NormalizedUserName = "ABRAR",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPQy2bfmYQcwVto2RK/EoZUsBHzweT1MxoFHF4XSH+oT39N4ofxuNL4U7UMzOFzCzQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "637997971683575490_797be156-d320-49f4-83b8-1b12d7e1b5c9",
+                            TwoFactorEnabled = false,
+                            UserName = "abrar",
+                            UsernameChangeLimit = 10
+                        });
                 });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.UserClaim", b =>
@@ -389,6 +467,85 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("UserClaim","Identity");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            ClaimType = "SuperAdmin_All",
+                            ClaimValue = "SuperAdmin.All",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -2,
+                            ClaimType = "Role_Create",
+                            ClaimValue = "Role.Create",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -3,
+                            ClaimType = "Role_Read",
+                            ClaimValue = "Role.Read",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -4,
+                            ClaimType = "Role_Update",
+                            ClaimValue = "Role.Update",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -5,
+                            ClaimType = "Role_Delete",
+                            ClaimValue = "Role.Delete",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -6,
+                            ClaimType = "Claim_Create",
+                            ClaimValue = "Claim.Create",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -7,
+                            ClaimType = "UsersApi_Get",
+                            ClaimValue = "UsersApi.Get",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -8,
+                            ClaimType = "UsersApi_GetAll",
+                            ClaimValue = "UsersApi.GetAll",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -9,
+                            ClaimType = "UsersApi_Update",
+                            ClaimValue = "UsersApi.Update",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -10,
+                            ClaimType = "UsersApi_Create",
+                            ClaimValue = "UsersApi.Create",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        },
+                        new
+                        {
+                            Id = -11,
+                            ClaimType = "UsersApi_Delete",
+                            ClaimValue = "UsersApi.Delete",
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109")
+                        });
                 });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.UserLogin", b =>
@@ -446,6 +603,14 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("UserRole","Identity");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("f87c05a2-e6ba-40f8-8c56-c1f9b46b6109"),
+                            RoleId = new Guid("39a9f99a-147f-4131-95f8-edb149eeb51c"),
+                            ReasonForAdding = "Created During Migration"
+                        });
                 });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.UserToken", b =>
@@ -470,17 +635,6 @@ namespace StartupProject_Asp.NetCore_PostGRE.Data.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("UserToken","Identity");
-                });
-
-            modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData.DoctorAssignment", b =>
-                {
-                    b.HasOne("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.User", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("DoctorId");
-
-                    b.HasOne("StartupProject_Asp.NetCore_PostGRE.Data.Models.Identity.User", "Patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId");
                 });
 
             modelBuilder.Entity("StartupProject_Asp.NetCore_PostGRE.Data.Models.AppData.LeaveApplication", b =>

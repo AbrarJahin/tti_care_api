@@ -16,6 +16,11 @@ using WebMarkupMin.AspNetCore3;
 using StartupProject_Asp.NetCore_PostGRE.Data.Enums;
 using StartupProject_Asp.NetCore_PostGRE.AuthorizationRequirement;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+//Global Error Handler is not configured yet - https://code-maze.com/global-error-handling-aspnetcore/
 
 namespace StartupProject_Asp.NetCore_PostGRE
 {
@@ -59,7 +64,7 @@ namespace StartupProject_Asp.NetCore_PostGRE
                 }
             });
             #endregion
-            #region Identity Service Configuration
+            #region Identity Authintication Service Configuration
             services.AddIdentity<User, Role>(options => {
                     //Password Settings
                     if (Environment.IsDevelopment())
@@ -95,6 +100,34 @@ namespace StartupProject_Asp.NetCore_PostGRE
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
+            #endregion
+
+            #region JWT Configuration in Auth with secreat value
+            TokenValidationParameters tokenValidationParameters = new TokenValidationParameters() {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["JWT:Secreat"])),
+
+                    ValidateIssuer = false,
+                    //ValidateIssuer = true,
+                    //ValidIssuer = Configuration["JWT:Issuer"],
+
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:Audience"],
+
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            services.AddSingleton(tokenValidationParameters);
+            services.AddAuthentication(options => {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(option=> {    //Add JWT bearer verifier
+                    option.SaveToken = true;
+                    option.RequireHttpsMetadata = false;    //HTTPS is not required
+                    option.TokenValidationParameters = tokenValidationParameters;
+                });
             #endregion
             #region Policies Configuration in Auth
             services.AddAuthorization(options => {
@@ -205,8 +238,10 @@ namespace StartupProject_Asp.NetCore_PostGRE
             app.UseWebMarkupMin();
             app.UseRouting();
 
+            #region Authentication and Authorization Use in Pipeline
             app.UseAuthentication();
             app.UseAuthorization();
+            #endregion
 
             #region Configure URL Convention
             app.UseEndpoints(endpoints =>

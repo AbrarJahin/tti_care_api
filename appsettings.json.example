@@ -3,6 +3,13 @@
     "DevelopConnection": "Filename=./sqlite_database/tti_care_dev.db",
     "DefaultConnection": "Filename=./sqlite_database/tti_care.db"
   },
+  "JWT": {
+    "Secreat": "Hi,-1-m?secreat!",
+    "Audience": "user",
+    "Issuer": "https://localhost:44381/",
+    "RefreshTokenTimeoutInDays": 7,
+    "AccessTokenTimeoutInMinutes": 10
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",

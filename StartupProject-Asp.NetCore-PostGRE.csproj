@@ -29,6 +29,8 @@
     <Compile Remove="Data\Migrations\20201209150208_ApplicationTableAdded.Designer.cs" />
     <Compile Remove="Data\Migrations\20201209152302_LeaveApplicationAdded.cs" />
     <Compile Remove="Data\Migrations\20201209152302_LeaveApplicationAdded.Designer.cs" />
+    <Compile Remove="Data\Migrations\20220926203028_Update-Refresh-Token.cs" />
+    <Compile Remove="Data\Migrations\20220926203028_Update-Refresh-Token.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +49,7 @@
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="MailKit" Version="2.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.10" />
