@@ -117,9 +117,18 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 			{
 				return BadRequest(new { message = "Please provide all required fields", success = false });
 			}
-
-			JwtViewModel result = await VerifyAndGenereateTokenAsync(tokenRequestVM);
-			return Ok(result);
+			try
+			{
+				JwtViewModel result = await VerifyAndGenereateTokenAsync(tokenRequestVM);
+				return Ok(result);
+			}
+			catch(Exception ex)
+			{
+				return BadRequest(new {
+					message = "Any of the token is invalid",
+					error = ex.Message
+				});
+			}
 		}
 
 		[HttpGet]
@@ -211,29 +220,42 @@ namespace StartupProject_Asp.NetCore_PostGRE.Controllers.Api
 		{
 			User doctor = await _userManager.FindByEmailAsync(doctorEmail);
 			User patient = await _userManager.FindByEmailAsync(patientEmail);
-			bool isAssigned = await AssignPatientToDoctor(doctor, patient);
-			if(isAssigned)
+			try
 			{
-				return Ok(new
+				bool isAssigned = await AssignPatientToDoctor(doctor, patient);
+				if (isAssigned)
 				{
-					doctorName = doctor.FullName,
-					doctorEmail = doctor.Email,
-					patientName = patient.FullName,
-					patientEmail = patient.Email,
-					assignmentStatus = isAssigned,
-					message = "Assigned Successfully"
-				});
+					return Ok(new
+					{
+						doctorName = doctor.FullName,
+						doctorEmail = doctor.Email,
+						patientName = patient.FullName,
+						patientEmail = patient.Email,
+						assignmentStatus = isAssigned,
+						message = "Assigned Successfully"
+					});
+				}
+				else
+				{
+					return BadRequest(new
+					{
+						doctorName = doctor.FullName,
+						doctorEmail = doctor.Email,
+						patientName = patient.FullName,
+						patientEmail = patient.Email,
+						assignmentStatus = isAssigned,
+						message = "Assignment Failed"
+					});
+				}
 			}
-			else
+			catch(Exception ex)
 			{
 				return BadRequest(new
 				{
-					doctorName = doctor.FullName,
-					doctorEmail = doctor.Email,
-					patientName = patient.FullName,
-					patientEmail = patient.Email,
-					assignmentStatus = isAssigned,
-					message = "Assignment Failed"
+					doctorEmail = doctorEmail,
+					patientEmail = patientEmail,
+					message = ex.Message,
+					failed = true
 				});
 			}
 		}
